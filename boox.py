@@ -19,6 +19,8 @@ class Boox:
 
         if token:
             self.token = token
+        elif email and code:
+            self.login_with_email(email, code)
 
         self.userid = self.api_call('users/me')['data']['uid']
 
@@ -29,6 +31,12 @@ class Boox:
 
         self.bucket_name = onyx_cloud['bucket']
         self.endpoint = onyx_cloud['aliEndpoint']
+
+    def login_with_email(self, email, code):
+
+        self.token = self.api_call('/users/signupByPhoneOrEmail',
+                                   data={'mobi': email,
+                                         'code': code})['data']['token']
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
         print()
