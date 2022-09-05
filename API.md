@@ -17,7 +17,7 @@ push/rePush/bat            |  POST  |    no    | force push file again to e-read
 push/saveAndPush           |  POST  |    yes   | send file
 users/getDevice            |  GET   |    yes   | get device information
 users/me                   |  GET   |    yes   | get account information
-users/sendMobileCode       |  GET   |    yes   | request verification code
+users/sendMobileCode       |  POST  |    yes   | request verification code
 users/signupByPhoneOrEmail |  POST  |    yes   | login to service
 users/syncToken            |  GET   |    no    |
 webpage/bat/del            |  POST  |    no    | remove webpages from list
