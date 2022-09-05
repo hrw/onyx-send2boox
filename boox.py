@@ -40,6 +40,8 @@ class Boox:
             headers["Authorization"] = f"Bearer {self.token}"
         if data:
             headers['Content-Type'] = 'application/json;charset=utf-8'
+            method = 'POST'
+
         r = requests.request(method, f'https://eur.boox.com/api/1/{api_url}',
                              headers=headers,
                              params=params,
@@ -88,7 +90,7 @@ class Boox:
 
         filename = os.path.basename(filename)
 
-        self.api_call('push/saveAndPush', method='POST',
+        self.api_call('push/saveAndPush',
                       headers={
                           'Content-Type': 'application/json;charset=utf-8',
                       },
