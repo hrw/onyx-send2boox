@@ -33,10 +33,12 @@ class Boox:
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
         headers["Authorization"] = f"Bearer {self.token}"
+        if data:
+            headers['Content-Type'] = 'application/json;charset=utf-8'
         r = requests.request(method, f'https://eur.boox.com/api/1/{api_url}',
                              headers=headers,
                              params=params,
-                             data=data)
+                             data=json.dumps(data))
 
         logging.info(json.dumps(r.json(), indent=4))
         logging.info('')
@@ -85,7 +87,7 @@ class Boox:
                       headers={
                           'Content-Type': 'application/json;charset=utf-8',
                       },
-                      data=json.dumps({
+                      data={
                           "data": {
                               "bucket": self.bucket_name,
                               'name': filename,
@@ -94,4 +96,4 @@ class Boox:
                               "resourceKey": remotename,
                               "resourceType": "txt",
                               "title": filename}
-                      }))
+                      })
