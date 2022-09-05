@@ -38,10 +38,6 @@ class Boox:
                                          'code': code})['data']['token']
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
-        print()
-        print(data)
-        print(headers)
-        print(params)
         headers["Authorization"] = f"Bearer {self.token}"
         r = requests.request(method, f'https://eur.boox.com/api/1/{api_url}',
                              headers=headers,
