@@ -55,12 +55,15 @@ class Boox:
         return r.json()
 
     def list_files(self, limit=24, offset=0):
-        self.api_call('push/message',
-                      params={"where": '{' f'"limit": {limit}, '
-                                       f'"offset": {offset}, '
-                                       '"parent": 0}'})
+        files = self.api_call('push/message',
+                              params={"where": '{' f'"limit": {limit}, '
+                                      f'"offset": {offset}, '
+                                      '"parent": 0}'})['list']
 
-    def send_file(self):
+        for entry in files:
+            print(f"{entry['data']['args']['name']}")
+
+    def send_file(self, filename):
         stss_data = self.api_call('config/stss')['data']
 
         self.access_key_id = stss_data['AccessKeyId']
