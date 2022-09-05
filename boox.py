@@ -8,22 +8,26 @@ import uuid
 
 class Boox:
 
-    def __init__(self, token='', email='', code=''):
+    def __init__(self, token='', email='', code='', skip_init=False):
 
-        if token:
-            self.token = token
-        elif email and code:
-            self.login_with_email(email, code)
+        if skip_init:
+            self.token = False
+        else:
+            if token != '':
+                self.token = token
+            elif email and code:
+                self.token = False
+                self.login_with_email(email, code)
 
-        self.userid = self.api_call('users/me')['data']['uid']
+            self.userid = self.api_call('users/me')['data']['uid']
 
-        self.api_call('users/getDevice')
-        self.api_call('im/getSig', params={"user": self.userid})
+            self.api_call('users/getDevice')
+            self.api_call('im/getSig', params={"user": self.userid})
 
-        onyx_cloud = self.api_call('config/buckets')['data']['onyx-cloud']
+            onyx_cloud = self.api_call('config/buckets')['data']['onyx-cloud']
 
-        self.bucket_name = onyx_cloud['bucket']
-        self.endpoint = onyx_cloud['aliEndpoint']
+            self.bucket_name = onyx_cloud['bucket']
+            self.endpoint = onyx_cloud['aliEndpoint']
 
     def login_with_email(self, email, code):
 
@@ -32,7 +36,8 @@ class Boox:
                                          'code': code})['data']['token']
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
-        headers["Authorization"] = f"Bearer {self.token}"
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
         if data:
             headers['Content-Type'] = 'application/json;charset=utf-8'
         r = requests.request(method, f'https://eur.boox.com/api/1/{api_url}',
