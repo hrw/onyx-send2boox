@@ -3,9 +3,8 @@ import json
 import logging
 import os
 import oss2
-import random
 import requests
-import string
+import uuid
 
 logging.basicConfig(level=logging.NOTSET)
 requests_log = logging.getLogger("urllib3")
@@ -71,37 +70,30 @@ class Boox:
         self.security_token = stss_data['SecurityToken']
 
         auth = oss2.Auth(self.access_key_id, self.access_key_secret)
-        # auth = oss2.StsAuth(access_key_id, access_key_secret, security_token)
 
         bucket = oss2.Bucket(auth, self.endpoint, self.bucket_name)
 
-        filename = '/tmp/local-test-name.txt'
-        remotename = f'{self.userid}/push/remote-name.txt'
-        content = oss2.to_bytes(''.join(random.choice(string.ascii_lowercase)
-                                        for i in range(1024)))
+        tmp, extension = os.path.splitext(filename)
+        remotename = f'{self.userid}/push/{uuid.uuid4()}.{extension}'
 
-        with open(filename, 'wb') as fileobj:
-            fileobj.write(content)
+        token_headers = {'x-oss-security-token': self.security_token}
 
         oss2.resumable_upload(bucket, remotename, filename,
-                              headers={'x-oss-security-token':
-                                       self.security_token})
+                              headers=token_headers)
 
-        os.remove(filename)
-
-        filename = filename.replace('/tmp/', '')
+        filename = os.path.basename(filename)
 
         self.api_call('push/saveAndPush', method='POST',
                       headers={
-                          'Origin': 'https://eur.boox.com',
-                          'Referer': 'https://eur.boox.com',
+                          'Content-Type': 'application/json;charset=utf-8',
                       },
                       data=json.dumps({
-                          "bucket": self.bucket_name,
-                          'name': filename,
-                          'parent': 'null',
-                          'resourceDisplayName': filename,
-                          "resourceKey": remotename,
-                          "resourceType": "txt",
-                          "title": filename
-                      }, indent=4))
+                          "data": {
+                              "bucket": self.bucket_name,
+                              'name': filename,
+                              'parent': None,
+                              'resourceDisplayName': filename,
+                              "resourceKey": remotename,
+                              "resourceType": "txt",
+                              "title": filename}
+                      }))
