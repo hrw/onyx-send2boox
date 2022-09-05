@@ -1,15 +1,9 @@
-
 import json
 import logging
 import os
 import oss2
 import requests
 import uuid
-
-logging.basicConfig(level=logging.NOTSET)
-requests_log = logging.getLogger("urllib3")
-requests_log.setLevel(logging.NOTSET)
-requests_log.propagate = True
 
 
 class Boox:
