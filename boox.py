@@ -49,8 +49,16 @@ class Boox:
                                       f'"offset": {offset}, '
                                       '"parent": 0}'})['list']
 
+        print("        ID               |    Size    | Name")
+        print("-------------------------|------------|"
+              "-------------------------------------------------------")
+
         for entry in files:
-            print(f"{entry['data']['args']['name']}")
+            data = entry['data']['args']
+            format = data['formats'][0]
+            print(f"{data['_id']} | "
+                  f"{data['storage'][format]['oss']['size']:>10} | "
+                  f"{data['name']}")
 
     def send_file(self, filename):
         stss_data = self.api_call('config/stss')['data']
