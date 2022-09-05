@@ -102,3 +102,6 @@ class Boox:
                               "resourceType": "txt",
                               "title": filename}
                       })
+
+    def request_verification_code(self, email):
+        self.api_call('users/sendMobileCode', data={"mobi": email})
