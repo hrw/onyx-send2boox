@@ -8,12 +8,12 @@ import uuid
 
 class Boox:
 
-    def __init__(self, token='', email='', code='', skip_init=False):
+    def __init__(self, token=None, email=None, code=None, skip_init=False):
 
         if skip_init:
             self.token = False
         else:
-            if token != '':
+            if token:
                 self.token = token
             elif email and code:
                 self.token = False
@@ -36,8 +36,10 @@ class Boox:
                                          'code': code})['data']['token']
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
+
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
+
         if data:
             headers['Content-Type'] = 'application/json;charset=utf-8'
             method = 'POST'
