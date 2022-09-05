@@ -27,7 +27,7 @@ class Boox:
 
     def login_with_email(self, email, code):
 
-        self.token = self.api_call('/users/signupByPhoneOrEmail',
+        self.token = self.api_call('users/signupByPhoneOrEmail',
                                    data={'mobi': email,
                                          'code': code})['data']['token']
 
