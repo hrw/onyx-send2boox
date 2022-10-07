@@ -1,6 +1,7 @@
 #  SPDX-License-Identifier: MIT
 
 import json
+import locale
 import logging
 import os
 import oss2
@@ -57,6 +58,8 @@ class Boox:
         return r.json()
 
     def list_files(self, limit=24, offset=0):
+        # I would expect LC_ALL to be set but it may not be
+        locale.setlocale(locale.LC_ALL, locale.getlocale()[0])
         files = self.api_call('push/message',
                               params={"where": '{' f'"limit": {limit}, '
                                       f'"offset": {offset}, '
@@ -70,7 +73,7 @@ class Boox:
             data = entry['data']['args']
             format = data['formats'][0]
             print(f"{data['_id']} | "
-                  f"{data['storage'][format]['oss']['size']:>10} | "
+                  f"{int(data['storage'][format]['oss']['size']):>10n} | "
                   f"{data['name']}")
 
     def send_file(self, filename):
