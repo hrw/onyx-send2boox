@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+#  SPDX-License-Identifier: MIT
+
 import configparser
 import boox
 import sys
