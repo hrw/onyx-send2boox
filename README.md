@@ -1,7 +1,6 @@
 # What it is?
 
-Python code to send file to Onyx Boox e-book reader. Some other API calls may be
-supported later too.
+Python code to handle files Onyx Boox e-book reader via Send2Boox service.
 
 
 # Usage
@@ -19,9 +18,9 @@ First you need to have a token:
 
 ## Sending files to e-reader
 
-Run "send_file.py FILENAME" script. It uses token from "config.ini" and pushes
-file to cloud used by Onyx. Later (or if run without arguments) it lists some
-files from your send2boox account.
+Run "send_file.py FILENAME1 FILENAME2" script. It uses token from "config.ini"
+and pushes file to cloud used by Onyx. Later (or if run without arguments) it
+lists some files from your send2boox account.
 
 
 # Contribute
@@ -32,5 +31,5 @@ requests, open issues etc.
 
 # To do
 
-There is no error checking at all. No way to choose CN/EU/US cloud (EU one is
-hardcoded).
+- add error checking
+- handle more API calls
