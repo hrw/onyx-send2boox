@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
     sys.exit(-1)
 
 config = boox.read_config()
-send2boox = boox.Boox(token=config['default']['token'], show_log=True)
+send2boox = boox.Boox(config, show_log=True)
 
 files_to_remove = sys.argv[1:]
 send2boox.delete_files(files_to_remove)

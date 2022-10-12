@@ -19,19 +19,20 @@ def read_config(filename="config.ini"):
 
 class Boox:
 
-    def __init__(self, token=None, email=None, code=None, skip_init=False,
+    def __init__(self, config, code=None, skip_init=False,
                  show_log=False):
 
         if show_log:
             logging.basicConfig(level=logging.NOTSET)
+
         if skip_init:
             self.token = False
         else:
-            if token:
-                self.token = token
-            elif email and code:
+            if config['default']['token']:
+                self.token = config['default']['token']
+            elif config['default']['email'] and code:
                 self.token = False
-                self.login_with_email(email, code)
+                self.login_with_email(config['default']['email'], code)
 
             self.userid = self.api_call('users/me')['data']['uid']
 

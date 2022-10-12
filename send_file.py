@@ -6,7 +6,7 @@ import boox
 import sys
 
 config = boox.read_config()
-send2boox = boox.Boox(token=config['default']['token'])
+send2boox = boox.Boox(config)
 
 if len(sys.argv) >= 2:
     for file_to_send in sys.argv[1:]:

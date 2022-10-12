@@ -10,7 +10,7 @@ if len(sys.argv) != 2:
 code = sys.argv[1]
 
 config = boox.read_config()
-send2boox = boox.Boox(email=config['default']['email'], code=code)
+send2boox = boox.Boox(config, code=code)
 
 config['default']['token'] = send2boox.token
 
