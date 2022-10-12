@@ -117,3 +117,6 @@ class Boox:
 
     def request_verification_code(self, email):
         self.api_call('users/sendMobileCode', data={"mobi": email})
+
+    def delete_files(self, ids):
+        self.api_call('push/message/batchDelete', data={"ids": ids})
