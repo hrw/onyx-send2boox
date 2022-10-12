@@ -11,8 +11,11 @@ import uuid
 
 class Boox:
 
-    def __init__(self, token=None, email=None, code=None, skip_init=False):
+    def __init__(self, token=None, email=None, code=None, skip_init=False,
+                 show_log=False):
 
+        if show_log:
+            logging.basicConfig(level=logging.NOTSET)
         if skip_init:
             self.token = False
         else:
