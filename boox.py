@@ -25,6 +25,11 @@ class Boox:
         if show_log:
             logging.basicConfig(level=logging.NOTSET)
 
+        if config['default']['cloud']:
+            self.cloud = config['default']['cloud']
+        else
+            self.cloud = 'eur.boox.com'
+
         if skip_init:
             self.token = False
         else:
@@ -59,7 +64,7 @@ class Boox:
             headers['Content-Type'] = 'application/json;charset=utf-8'
             method = 'POST'
 
-        r = requests.request(method, f'https://eur.boox.com/api/1/{api_url}',
+        r = requests.request(method, f'https://{self.cloud}/api/1/{api_url}',
                              headers=headers,
                              params=params,
                              data=json.dumps(data))
