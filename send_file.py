@@ -2,13 +2,10 @@
 
 #  SPDX-License-Identifier: MIT
 
-import configparser
 import boox
 import sys
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-
+config = boox.read_config()
 send2boox = boox.Boox(token=config['default']['token'])
 
 if len(sys.argv) == 2:

@@ -1,5 +1,6 @@
 #  SPDX-License-Identifier: MIT
 
+import configparser
 import json
 import locale
 import logging
@@ -7,6 +8,13 @@ import os
 import oss2
 import requests
 import uuid
+
+
+def read_config(filename="config.ini"):
+    config = configparser.ConfigParser()
+    config.read(filename)
+
+    return config
 
 
 class Boox:

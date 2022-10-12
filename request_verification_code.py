@@ -3,14 +3,8 @@
 #  SPDX-License-Identifier: MIT
 
 import boox
-import configparser
-import logging
 
-logging.basicConfig(level=logging.NOTSET)
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
+config = boox.read_config()
 send2boox = boox.Boox(skip_init=True)
 
 send2boox.request_verification_code(config['default']['email'])
