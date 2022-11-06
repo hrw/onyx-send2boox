@@ -27,7 +27,7 @@ class Boox:
 
         if config['default']['cloud']:
             self.cloud = config['default']['cloud']
-        else
+        else:
             self.cloud = 'eur.boox.com'
 
         if skip_init:
