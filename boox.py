@@ -81,6 +81,25 @@ class Boox:
         logging.info('')
 
         return r.json()
+    
+    def list_book_notes(self, method='GET', headers={}, data={}, params={}, limit=1000, offset=0):
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+
+        if data:
+            headers['Content-Type'] = 'application/json;charset=utf-8'
+            method = 'POST'
+
+        r = requests.request(method, f'https://{self.cloud}/neocloud/_changes',
+                             cookies=self.cookie,
+                             headers=headers,
+                             params={"filter": 'sync_gateway/bychannel',
+                                    "channels": "61520c54ed4d5c5cf205f4e3-READER_LIBRARY"},
+                            )
+
+        logging.info(json.dumps(r.json(), indent=4))
+        logging.info('')
+        return r.json()
 
     def list_files(self, limit=24, offset=0):
         # I would expect LC_ALL to be set but it may not be
