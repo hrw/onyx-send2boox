@@ -31,12 +31,12 @@ class Boox:
             self.cloud = 'eur.boox.com'
 
         if skip_init:
-            self.token = False
+            self.set_token_and_cookie_to_false()
         else:
             if config['default']['token']:
                 self.token = config['default']['token']
             elif config['default']['email'] and code:
-                self.token = False
+                self.set_token_and_cookie_to_false()
                 self.login_with_email(config['default']['email'], code)
 
             self.userid = self.api_call('users/me')['data']['uid']
@@ -48,12 +48,20 @@ class Boox:
 
             self.bucket_name = onyx_cloud['bucket']
             self.endpoint = onyx_cloud['aliEndpoint']
+            # Share session for other API calls like neocloud
+            self.cookie = {"SyncGatewaySession": self.api_call('users/syncToken')['data']['session_id']} 
+
+    def set_token_and_cookie_to_false(self):
+        # This allows to use Boox class without token and cookie
+        self.token = False
+        self.cookie = False
 
     def login_with_email(self, email, code):
 
         self.token = self.api_call('users/signupByPhoneOrEmail',
                                    data={'mobi': email,
                                          'code': code})['data']['token']
+        self.cookie = {"SyncGatewaySession": self.api_call('users/syncToken')['data']['session_id']}        
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
 
@@ -63,7 +71,7 @@ class Boox:
         if data:
             headers['Content-Type'] = 'application/json;charset=utf-8'
             method = 'POST'
-
+        
         r = requests.request(method, f'https://{self.cloud}/api/1/{api_url}',
                              headers=headers,
                              params=params,
