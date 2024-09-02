@@ -63,7 +63,8 @@ class Boox:
                                          'code': code})['data']['token']
         self.cookie = {"SyncGatewaySession": self.api_call('users/syncToken')['data']['session_id']}        
 
-    def api_call(self, api_url, method='GET', headers={}, data={}, params={}):
+    def api_call(self, api_url, method='GET', headers={}, data={}, params={},
+                 api='api/1'):
 
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
@@ -71,8 +72,9 @@ class Boox:
         if data:
             headers['Content-Type'] = 'application/json;charset=utf-8'
             method = 'POST'
-        
-        r = requests.request(method, f'https://{self.cloud}/api/1/{api_url}',
+
+        r = requests.request(method,
+                             f'https://{self.cloud}/{api}/{api_url}',
                              headers=headers,
                              params=params,
                              data=json.dumps(data))
