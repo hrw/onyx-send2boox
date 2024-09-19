@@ -21,22 +21,23 @@ class Boox:
 
     def __init__(self, config, code=None, skip_init=False,
                  show_log=False):
+        self.cookie = ""
 
         if show_log:
             logging.basicConfig(level=logging.NOTSET)
-
+        
         if config['default']['cloud']:
             self.cloud = config['default']['cloud']
         else:
             self.cloud = 'eur.boox.com'
 
         if skip_init:
-            self.token = False
+            self.clean_auth()
         else:
             if config['default']['token']:
                 self.token = config['default']['token']
             elif config['default']['email'] and code:
-                self.token = False
+                self.clean_auth()
                 self.login_with_email(config['default']['email'], code)
 
             self.userid = self.api_call('users/me')['data']['uid']
@@ -48,12 +49,20 @@ class Boox:
 
             self.bucket_name = onyx_cloud['bucket']
             self.endpoint = onyx_cloud['aliEndpoint']
+            # Share session for other API calls like neocloud
+            self.cookie = {"SyncGatewaySession": self.api_call('users/syncToken')['data']['session_id']} 
+
+    def clean_auth(self):
+        # This allows to use Boox class without token and cookie
+        self.token = False
+        self.cookie = False
 
     def login_with_email(self, email, code):
 
         self.token = self.api_call('users/signupByPhoneOrEmail',
                                    data={'mobi': email,
                                          'code': code})['data']['token']
+        self.cookie = {"SyncGatewaySession": self.api_call('users/syncToken')['data']['session_id']}        
 
     def api_call(self, api_url, method='GET', headers={}, data={}, params={},
                  api='api/1'):
@@ -69,12 +78,19 @@ class Boox:
                              f'https://{self.cloud}/{api}/{api_url}',
                              headers=headers,
                              params=params,
+                             cookies=self.cookie,
                              data=json.dumps(data))
 
         logging.info(json.dumps(r.json(), indent=4))
         logging.info('')
 
         return r.json()
+    
+    def list_book_notes(self):
+        changes = self.api_call('_changes',
+                      params={"filter": 'sync_gateway/bychannel',
+                                    "channels": f'{self.userid}-READER_LIBRARY'},
+                        api='neocloud')
 
     def list_files(self, limit=24, offset=0):
         # I would expect LC_ALL to be set but it may not be
