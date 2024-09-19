@@ -21,22 +21,23 @@ class Boox:
 
     def __init__(self, config, code=None, skip_init=False,
                  show_log=False):
+        self.cookie = ""
 
         if show_log:
             logging.basicConfig(level=logging.NOTSET)
-
+        
         if config['default']['cloud']:
             self.cloud = config['default']['cloud']
         else:
             self.cloud = 'eur.boox.com'
 
         if skip_init:
-            self.set_token_and_cookie_to_false()
+            self.clean_auth()
         else:
             if config['default']['token']:
                 self.token = config['default']['token']
             elif config['default']['email'] and code:
-                self.set_token_and_cookie_to_false()
+                self.clean_auth()
                 self.login_with_email(config['default']['email'], code)
 
             self.userid = self.api_call('users/me')['data']['uid']
@@ -51,7 +52,7 @@ class Boox:
             # Share session for other API calls like neocloud
             self.cookie = {"SyncGatewaySession": self.api_call('users/syncToken')['data']['session_id']} 
 
-    def set_token_and_cookie_to_false(self):
+    def clean_auth(self):
         # This allows to use Boox class without token and cookie
         self.token = False
         self.cookie = False
@@ -77,6 +78,7 @@ class Boox:
                              f'https://{self.cloud}/{api}/{api_url}',
                              headers=headers,
                              params=params,
+                             cookies=self.cookie,
                              data=json.dumps(data))
 
         logging.info(json.dumps(r.json(), indent=4))
@@ -84,24 +86,11 @@ class Boox:
 
         return r.json()
     
-    def list_book_notes(self, method='GET', headers={}, data={}, params={}, limit=1000, offset=0):
-        if self.token:
-            headers["Authorization"] = f"Bearer {self.token}"
-
-        if data:
-            headers['Content-Type'] = 'application/json;charset=utf-8'
-            method = 'POST'
-
-        r = requests.request(method, f'https://{self.cloud}/neocloud/_changes',
-                             cookies=self.cookie,
-                             headers=headers,
-                             params={"filter": 'sync_gateway/bychannel',
-                                    "channels": "61520c54ed4d5c5cf205f4e3-READER_LIBRARY"},
-                            )
-
-        logging.info(json.dumps(r.json(), indent=4))
-        logging.info('')
-        return r.json()
+    def list_book_notes(self):
+        changes = self.api_call('_changes',
+                      params={"filter": 'sync_gateway/bychannel',
+                                    "channels": f'{self.userid}-READER_LIBRARY'},
+                        api='neocloud')
 
     def list_files(self, limit=24, offset=0):
         # I would expect LC_ALL to be set but it may not be
